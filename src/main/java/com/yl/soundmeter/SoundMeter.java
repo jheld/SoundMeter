@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -82,6 +83,11 @@ public class SoundMeter extends Activity {
         if ((bool) && (RateCnt >= RATE_COUNT) && ((RateCnt - RATE_COUNT) % 3 == 0))
             new ShowDialog().RateDialog(this).show();
         setVolumeControlStream(3);
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy =
+                    new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
 //        if (Build.VERSION.SDK_INT > 10)
 //            setTheme(2131492951);
 //        getSupportActionBar().setHomeButtonEnabled(true);
