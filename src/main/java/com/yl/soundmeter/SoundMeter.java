@@ -59,6 +59,7 @@ public class SoundMeter extends Activity {
     };
 
     static TextView mSoundDB;
+    static TextView mServerIP;
 //    private SubMenu r;
 
     @Override
@@ -70,6 +71,7 @@ public class SoundMeter extends Activity {
         mRecorder = new Recorder(getApplicationContext());
         mSoundPlay = new SoundPlay(getApplicationContext());
         mSoundDB = (TextView) findViewById(R.id.text_sounddb);
+        mServerIP = (TextView) findViewById(R.id.text_server_ip);
 //        a(false);
 //        if (!getString(2131427344).contains("Sound"))
 //            finish();

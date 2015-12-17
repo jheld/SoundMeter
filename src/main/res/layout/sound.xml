@@ -25,6 +25,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
         </TextView>
+
     </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Server ip:"
+        android:id="@+id/text_server_ip_label" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/text_server_ip"
+        android:text="0.0.0.0:8000"
+        android:layout_gravity="center_vertical" />
 
 </RelativeLayout>

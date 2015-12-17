@@ -43,7 +43,7 @@ public class Recorder {
 
     private MediaRecorder mRecorder = null;
     private Context mContext;
-    String postUrl = "http://192.168.0.115:8000";
+    String postUrl = "http://192.168.0.121:8000";
 
     public Recorder(Context applicationContext) {
 
@@ -323,51 +323,55 @@ public class Recorder {
 
         localTextView = SoundMeter.mSoundDB;
         localTextView.setText(String.format("%d DB", Math.round(f2)));
+        Log.d("ip addr", SoundMeter.mServerIP.getText().toString());
         // Create a default HTTP client
+        String ip_addr = SoundMeter.mServerIP.getText().toString();
+        if (!ip_addr.equalsIgnoreCase("")) {
+            Integer db_integer = Math.round(f2);
+            String db_string = db_integer.toString();
+            JSONObject json_object = this.dataToJson(db_string);
 
-        Integer db_integer = Math.round(f2);
-        String db_string = db_integer.toString();
-        JSONObject json_object = this.dataToJson(db_string);
-
-        try {
-
-            // Create a default HTTP client
-            HttpClient client = new DefaultHttpClient();
-
-            // Create HTTP post object
-            HttpPost poster = new HttpPost(this.postUrl);
-
-            // Get a string from the JSON Object
-            String jsonString = json_object.toString();
-            Log.e("json string: ", jsonString);
-
-            // Set the HTTP entity
-            StringEntity entity = new StringEntity(jsonString);
-            poster.setEntity(entity);
-
-            // Set the header
-            poster.setHeader("Accept", "application/json");
-            poster.setHeader("Content-type","application/json");
-
-            // Execute the post
-            HttpResponse response = null;
             try {
-                response = client.execute((HttpUriRequest) poster);
+
+                // Create a default HTTP client
+                HttpClient client = new DefaultHttpClient();
+
+                // Create HTTP post object
+                Log.d("is equal: ", String.format("is equal: %s", ip_addr.equalsIgnoreCase("192.168.0.121:8000")));
+                HttpPost poster = new HttpPost("http://" + ip_addr);
+
+                // Get a string from the JSON Object
+                String jsonString = json_object.toString();
+                Log.e("json string: ", jsonString);
+
+                // Set the HTTP entity
+                StringEntity entity = new StringEntity(jsonString);
+                poster.setEntity(entity);
+
+                // Set the header
+                poster.setHeader("Accept", "application/json");
+                poster.setHeader("Content-type", "application/json");
+
+                // Execute the post
+                HttpResponse response = null;
+                try {
+                    response = client.execute((HttpUriRequest) poster);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                // Get entity from the response
+                HttpEntity entityHttp = response.getEntity();
+
+                // Log the response (should be JSON string data)
+                if (entity != null) {
+                    Log.e("result: ", EntityUtils.toString(entityHttp));
+                }
+
             } catch (Exception e) {
+                Log.e("post error: ", "Unable to post to database");
                 e.printStackTrace();
             }
-
-            // Get entity from the response
-            HttpEntity entityHttp = response.getEntity();
-
-            // Log the response (should be JSON string data)
-            if (entity != null) {
-                Log.e("result: ", EntityUtils.toString(entityHttp));
-            }
-
-        } catch(Exception e) {
-            Log.e("post error: ", "Unable to post to database");
-            e.printStackTrace();
         }
 
 //        if (f1 > 0.0F)
