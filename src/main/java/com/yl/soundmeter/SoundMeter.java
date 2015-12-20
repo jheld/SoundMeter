@@ -18,6 +18,8 @@ import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.Switch;
 import android.widget.TextView;
 
 
@@ -48,7 +50,7 @@ public class SoundMeter extends Activity {
     private Handler mHandler = new Handler();               //m
     private SoundPlay mSoundPlay;         //aj n
     private Recorder mRecorder;         //ah o
-    private SharedPreferences mPref;    //p
+    public static SharedPreferences mPref;    //p
     private Runnable mUpdateTimer = new Runnable() {        //q
         @Override
         public void run() {
@@ -60,6 +62,8 @@ public class SoundMeter extends Activity {
 
     static TextView mSoundDB;
     static TextView mServerIP;
+    static Button mIP_save;
+    static Switch mSend_db;
 //    private SubMenu r;
 
     @Override
@@ -72,6 +76,8 @@ public class SoundMeter extends Activity {
         mSoundPlay = new SoundPlay(getApplicationContext());
         mSoundDB = (TextView) findViewById(R.id.text_sounddb);
         mServerIP = (TextView) findViewById(R.id.text_server_ip);
+        mIP_save = (Button) findViewById(R.id.button_server_ip);
+        mSend_db = (Switch) findViewById(R.id.db_send);
 //        a(false);
 //        if (!getString(2131427344).contains("Sound"))
 //            finish();

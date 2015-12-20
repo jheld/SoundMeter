@@ -1,6 +1,8 @@
 package com.yl.soundmeter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.media.MediaRecorder;
 import android.util.Log;
 import android.widget.TextView;
@@ -39,7 +41,7 @@ import java.util.Map;
 /**
  * Created by Admin on 13-9-10.
  */
-public class Recorder {
+public class Recorder{
 
     private MediaRecorder mRecorder = null;
     private Context mContext;
@@ -60,6 +62,7 @@ public class Recorder {
     {
         float bak = new CalAvg().Cal(3.0f);
         Log.d("SoundMeter", String.valueOf(bak));
+
 
         if (mRecorder != null)
             return;
@@ -320,13 +323,30 @@ public class Recorder {
             f2 = (float)(20.0D * Math.log10(f1));
             Log.d("SoundMeter", "SoundDB: " + f2);
         }
+        String ip_addr = SoundMeter.mPref.getString("server_addr", "0.0.0.0:8000");
 
+        if (SoundMeter.mSend_db != null &&  SoundMeter.mSend_db.isChecked()) {
+            Log.d("ip addr", "is checked...");
+
+            if (!SoundMeter.mServerIP.getText().toString().equalsIgnoreCase(ip_addr)) {
+                Log.d("ip addr", "not equal...");
+                SharedPreferences.Editor editor = SoundMeter.mPref.edit();
+                editor.putString("server_addr", SoundMeter.mServerIP.getText().toString());
+                editor.commit();
+                ip_addr = SoundMeter.mPref.getString("server_addr", "0.0.0.0.:8000");
+                SoundMeter.mServerIP.setText(ip_addr);
+            }
+        }
+        Log.d("ip addr", ip_addr);
         localTextView = SoundMeter.mSoundDB;
         localTextView.setText(String.format("%d DB", Math.round(f2)));
-        Log.d("ip addr", SoundMeter.mServerIP.getText().toString());
+        if (SoundMeter.mSend_db != null) {
+            Log.d("is checked", "" + SoundMeter.mSend_db.isChecked());
+        }
         // Create a default HTTP client
-        String ip_addr = SoundMeter.mServerIP.getText().toString();
-        if (!ip_addr.equalsIgnoreCase("")) {
+        //String ip_addr = SoundMeter.mServerIP.getText().toString();
+        if (SoundMeter.mSend_db != null && !ip_addr.equalsIgnoreCase("") && SoundMeter.mSend_db.isChecked()) {
+            Log.d(ip_addr, "set as.");
             Integer db_integer = Math.round(f2);
             String db_string = db_integer.toString();
             JSONObject json_object = this.dataToJson(db_string);
@@ -337,8 +357,7 @@ public class Recorder {
                 HttpClient client = new DefaultHttpClient();
 
                 // Create HTTP post object
-                Log.d("is equal: ", String.format("is equal: %s", ip_addr.equalsIgnoreCase("192.168.0.121:8000")));
-                HttpPost poster = new HttpPost("http://" + ip_addr);
+                HttpPost poster = new HttpPost("http://" + ip_addr + "/adjust/");
 
                 // Get a string from the JSON Object
                 String jsonString = json_object.toString();
